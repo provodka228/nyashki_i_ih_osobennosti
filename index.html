@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Comic Neue', cursive;
             background-color: #fff0f5;
             text-align: center;
             margin: 0;
@@ -15,30 +17,52 @@
             background-size: 300px;
             background-blend-mode: overlay;
             background-attachment: fixed;
+            transition: all 0.5s;
+            overflow-x: hidden;
         }
+        
+        /* Вечеринка режим */
+        body.party-mode {
+            animation: partyBg 0.5s infinite;
+            background-image: url('https://i.pinimg.com/originals/7f/3a/3b/7f3a3b4e9c7c7a8b6e8d7c0e8f3a3b4e.png'), 
+                            linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00);
+            background-blend-mode: overlay, screen;
+        }
+        
         h1 {
             color: #ff69b4;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             font-size: 2.5em;
             margin-bottom: 30px;
             animation: glow 2s infinite alternate;
+            transition: all 0.3s;
         }
+        
+        .friends-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        
         .friend-card {
             background: rgba(255, 255, 255, 0.9);
             border: 3px dashed #ff69b4;
             border-radius: 15px;
             padding: 20px;
-            margin: 30px auto;
-            max-width: 400px;
+            width: 300px;
             box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
             position: relative;
             overflow: hidden;
         }
+        
         .friend-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) rotate(1deg);
             box-shadow: 0 10px 20px rgba(255, 105, 180, 0.4);
         }
+        
         .friend-card::before {
             content: "";
             position: absolute;
@@ -52,9 +76,11 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
+        
         .friend-card:hover::before {
             opacity: 0.3;
         }
+        
         .friend-photo {
             width: 180px;
             height: 180px;
@@ -65,11 +91,13 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
+        
         .friend-photo:hover {
             transform: scale(1.1) rotate(5deg);
             border-color: #ff1493;
             box-shadow: 0 8px 20px rgba(255, 20, 147, 0.4);
         }
+        
         .friend-name {
             font-weight: bold;
             color: #ff1493;
@@ -78,24 +106,29 @@
             transition: all 0.3s;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
+        
         .friend-name:hover {
             color: #ff69b4;
             transform: scale(1.05);
             text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
         }
+        
         .friend-description {
             color: #555;
             transition: all 0.3s;
             padding: 0 10px;
         }
+        
         .friend-description:hover {
             color: #ff69b4;
             transform: scale(1.02);
         }
+        
         input[type="file"], 
         input[type="text"] {
             display: none;
         }
+        
         .edit-btn {
             background: linear-gradient(45deg, #ff69b4, #ff1493);
             color: white;
@@ -108,11 +141,13 @@
             box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
             font-weight: bold;
         }
+        
         .edit-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(255, 20, 147, 0.4);
             background: linear-gradient(45deg, #ff1493, #ff69b4);
         }
+        
         .text-input {
             display: block;
             width: 80%;
@@ -123,21 +158,52 @@
             outline: none;
             transition: all 0.3s;
         }
+        
         .text-input:focus {
             border-color: #ff1493;
             box-shadow: 0 0 8px rgba(255, 20, 147, 0.4);
         }
+        
         .anime-girl {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
             width: 150px;
             transition: all 0.5s;
             z-index: 100;
+            cursor: pointer;
         }
+        
+        #rem {
+            bottom: 20px;
+            left: 20px;
+        }
+        
+        #anime-girl {
+            bottom: 20px;
+            right: 20px;
+        }
+        
         .anime-girl:hover {
             transform: scale(1.1) rotate(-10deg);
         }
+        
+        .secret-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        
+        .secret-btn:hover {
+            opacity: 1;
+        }
+        
         @keyframes glow {
             from {
                 text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4;
@@ -146,40 +212,105 @@
                 text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493, 0 0 30px #ff1493;
             }
         }
+        
         @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
+        
+        @keyframes dance {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(5deg) scale(1.05); }
+            50% { transform: rotate(-5deg) scale(1.1); }
+            75% { transform: rotate(5deg) scale(1.05); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        
+        @keyframes partyBg {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
         .floating {
             animation: float 3s ease-in-out infinite;
+        }
+        
+        .dancing {
+            animation: dance 0.5s infinite;
         }
     </style>
 </head>
 <body>
+    <!-- Секретная кнопка вечеринки -->
+    <button class="secret-btn" title="Вечеринка!">🎉</button>
+    
     <h1 class="floating">ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</h1>
 
-    <!-- Аниме-девочка -->
-    <img src="https://i.imgur.com/JrQ6TzG.png" class="anime-girl floating" alt="Аниме-няшка" title="Ня~">
+    <!-- Аниме-девочки -->
+    <img src="https://i.pinimg.com/originals/20/33/65/203365739421321360a6b0e8e1e3e3a3.jpg" class="anime-girl floating" id="anime-girl" alt="Аниме-няшка" title="Ня~">
+    <img src="https://i.pinimg.com/originals/28/42/90/28429041392607438a6b0e8e1e3e3a3.jpg" class="anime-girl floating" id="rem" alt="Рем" title="Рем-тян!">
 
-    <!-- Карточка друга -->
-    <div class="friend-card floating">
-        <label for="photo-upload-1">
-            <img 
-                id="friend-photo-1" 
-                src="https://via.placeholder.com/150" 
-                alt="Кликни, чтобы загрузить фото" 
-                class="friend-photo"
-                title="Кликни, чтобы загрузить фото"
-            >
-        </label>
-        <input type="file" id="photo-upload-1" accept="image/*">
-        <div class="friend-name" id="name-friend1">Имя друга</div>
-        <div class="friend-description" id="desc-friend1">Описание няшки</div>
-        
-        <input type="text" id="edit-name-friend1" class="text-input" placeholder="Введите имя">
-        <input type="text" id="edit-desc-friend1" class="text-input" placeholder="Введите описание">
-        <button class="edit-btn">✏️ Редактировать текст</button>
+    <div class="friends-container">
+        <!-- Карточка друга 1 -->
+        <div class="friend-card floating">
+            <label for="photo-upload-1">
+                <img 
+                    id="friend-photo-1" 
+                    src="https://via.placeholder.com/150" 
+                    alt="Кликни, чтобы загрузить фото" 
+                    class="friend-photo"
+                    title="Кликни, чтобы загрузить фото"
+                >
+            </label>
+            <input type="file" id="photo-upload-1" accept="image/*">
+            <div class="friend-name" id="name-friend1">Имя друга</div>
+            <div class="friend-description" id="desc-friend1">Описание няшки</div>
+            
+            <input type="text" id="edit-name-friend1" class="text-input" placeholder="Введите имя">
+            <input type="text" id="edit-desc-friend1" class="text-input" placeholder="Введите описание">
+            <button class="edit-btn">✏️ Редактировать текст</button>
+        </div>
+
+        <!-- Карточка друга 2 -->
+        <div class="friend-card floating">
+            <label for="photo-upload-2">
+                <img 
+                    id="friend-photo-2" 
+                    src="https://via.placeholder.com/150" 
+                    alt="Кликни, чтобы загрузить фото" 
+                    class="friend-photo"
+                    title="Кликни, чтобы загрузить фото"
+                >
+            </label>
+            <input type="file" id="photo-upload-2" accept="image/*">
+            <div class="friend-name" id="name-friend2">Имя друга</div>
+            <div class="friend-description" id="desc-friend2">Описание няшки</div>
+            
+            <input type="text" id="edit-name-friend2" class="text-input" placeholder="Введите имя">
+            <input type="text" id="edit-desc-friend2" class="text-input" placeholder="Введите описание">
+            <button class="edit-btn">✏️ Редактировать текст</button>
+        </div>
+
+        <!-- Карточка друга 3 -->
+        <div class="friend-card floating">
+            <label for="photo-upload-3">
+                <img 
+                    id="friend-photo-3" 
+                    src="https://via.placeholder.com/150" 
+                    alt="Кликни, чтобы загрузить фото" 
+                    class="friend-photo"
+                    title="Кликни, чтобы загрузить фото"
+                >
+            </label>
+            <input type="file" id="photo-upload-3" accept="image/*">
+            <div class="friend-name" id="name-friend3">Имя друга</div>
+            <div class="friend-description" id="desc-friend3">Описание няшки</div>
+            
+            <input type="text" id="edit-name-friend3" class="text-input" placeholder="Введите имя">
+            <input type="text" id="edit-desc-friend3" class="text-input" placeholder="Введите описание">
+            <button class="edit-btn">✏️ Редактировать текст</button>
+        </div>
     </div>
 
     <!-- Конфетти-скрипт -->
@@ -188,33 +319,79 @@
     <script>
         // Запуск конфетти при загрузке
         document.addEventListener('DOMContentLoaded', function() {
-            // Базовая анимация конфетти
+            // Большой взрыв конфетти
             confetti({
-                particleCount: 100,
+                particleCount: 150,
                 spread: 70,
-                origin: { y: 0.6 }
+                origin: { y: 0.6 },
+                colors: ['#ff69b4', '#ff1493', '#ffffff']
             });
             
-            // Дополнительные эффекты через 1 сек
-            setTimeout(() => {
-                confetti({
-                    particleCount: 50,
-                    angle: 60,
-                    spread: 55,
-                    origin: { x: 0 }
-                });
-                confetti({
-                    particleCount: 50,
-                    angle: 120,
-                    spread: 55,
-                    origin: { x: 1 }
-                });
-            }, 1000);
+            // Инициализация всех карточек
+            initFriendCard(1);
+            initFriendCard(2);
+            initFriendCard(3);
             
-            // Инициализация элементов
-            const fileInput = document.getElementById('photo-upload-1');
-            const imgElement = document.getElementById('friend-photo-1');
-            const editBtn = document.querySelector('.edit-btn');
+            // Секретная кнопка вечеринки
+            const secretBtn = document.querySelector('.secret-btn');
+            let partyMode = false;
+            
+            secretBtn.addEventListener('click', function() {
+                partyMode = !partyMode;
+                
+                if (partyMode) {
+                    // Включение режима вечеринки
+                    document.body.classList.add('party-mode');
+                    document.querySelectorAll('.friend-card, .anime-girl, h1').forEach(el => {
+                        el.classList.add('dancing');
+                    });
+                    
+                    // Мега-конфетти
+                    const end = Date.now() + 3000;
+                    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+                    
+                    const frame = () => {
+                        confetti({
+                            particleCount: 10,
+                            angle: 60,
+                            spread: 70,
+                            origin: { x: 0 },
+                            colors: colors
+                        });
+                        
+                        confetti({
+                            particleCount: 10,
+                            angle: 120,
+                            spread: 70,
+                            origin: { x: 1 },
+                            colors: colors
+                        });
+                        
+                        if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                        }
+                    };
+                    
+                    frame();
+                    
+                    // Меняем иконку кнопки
+                    secretBtn.innerHTML = '🕺';
+                } else {
+                    // Выключение режима вечеринки
+                    document.body.classList.remove('party-mode');
+                    document.querySelectorAll('.dancing').forEach(el => {
+                        el.classList.remove('dancing');
+                    });
+                    secretBtn.innerHTML = '🎉';
+                }
+            });
+        });
+        
+        // Функция инициализации карточки друга
+        function initFriendCard(cardNumber) {
+            const fileInput = document.getElementById(`photo-upload-${cardNumber}`);
+            const imgElement = document.getElementById(`friend-photo-${cardNumber}`);
+            const editBtn = document.querySelectorAll('.edit-btn')[cardNumber-1];
             
             // Обработчик загрузки фото
             fileInput.addEventListener('change', function(e) {
@@ -225,12 +402,13 @@
                 reader.onload = function(event) {
                     imgElement.src = event.target.result;
                     try {
-                        localStorage.setItem('friend1_photo', event.target.result);
+                        localStorage.setItem(`friend${cardNumber}_photo`, event.target.result);
                         // Мини-конфетти при успешной загрузке фото
                         confetti({
                             particleCount: 30,
                             spread: 40,
-                            origin: { y: 0.8 }
+                            origin: { y: 0.8 },
+                            colors: ['#ff69b4', '#ff1493']
                         });
                     } catch (error) {
                         console.error('Ошибка сохранения:', error);
@@ -240,17 +418,17 @@
             });
             
             // Загрузка сохраненного фото
-            const savedPhoto = localStorage.getItem('friend1_photo');
+            const savedPhoto = localStorage.getItem(`friend${cardNumber}_photo`);
             if (savedPhoto) {
                 imgElement.src = savedPhoto;
             }
             
             // Редактирование текста
             editBtn.addEventListener('click', function() {
-                const nameElement = document.getElementById('name-friend1');
-                const descElement = document.getElementById('desc-friend1');
-                const nameInput = document.getElementById('edit-name-friend1');
-                const descInput = document.getElementById('edit-desc-friend1');
+                const nameElement = document.getElementById(`name-friend${cardNumber}`);
+                const descElement = document.getElementById(`desc-friend${cardNumber}`);
+                const nameInput = document.getElementById(`edit-name-friend${cardNumber}`);
+                const descInput = document.getElementById(`edit-desc-friend${cardNumber}`);
                 
                 if (nameInput.style.display === 'none' || !nameInput.style.display) {
                     nameInput.style.display = 'block';
@@ -268,8 +446,8 @@
                     descElement.textContent = descInput.value;
                     
                     try {
-                        localStorage.setItem('friend1_name', nameInput.value);
-                        localStorage.setItem('friend1_desc', descInput.value);
+                        localStorage.setItem(`friend${cardNumber}_name`, nameInput.value);
+                        localStorage.setItem(`friend${cardNumber}_desc`, descInput.value);
                         // Мини-конфетти при сохранении
                         confetti({
                             particleCount: 20,
@@ -283,29 +461,23 @@
             });
             
             // Загрузка сохраненного текста
-            const savedName = localStorage.getItem('friend1_name');
-            const savedDesc = localStorage.getItem('friend1_desc');
-            if (savedName) document.getElementById('name-friend1').textContent = savedName;
-            if (savedDesc) document.getElementById('desc-friend1').textContent = savedDesc;
-            
-            // Анимация при наведении на элементы
-            document.querySelectorAll('.friend-name, .friend-description').forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    el.style.transform = 'scale(1.05)';
-                });
-                el.addEventListener('mouseleave', () => {
-                    el.style.transform = 'scale(1)';
-                });
-            });
-        });
+            const savedName = localStorage.getItem(`friend${cardNumber}_name`);
+            const savedDesc = localStorage.getItem(`friend${cardNumber}_desc`);
+            if (savedName) document.getElementById(`name-friend${cardNumber}`).textContent = savedName;
+            if (savedDesc) document.getElementById(`desc-friend${cardNumber}`).textContent = savedDesc;
+        }
         
         // Конфетти при клике в любом месте
         document.addEventListener('click', function(e) {
-            if (Math.random() > 0.7) { // 30% шанс на конфетти при клике
+            if (e.target.tagName !== 'BUTTON' && Math.random() > 0.7) {
                 confetti({
-                    particleCount: 20,
+                    particleCount: 15,
                     spread: 40,
-                    origin: { x: e.clientX/window.innerWidth, y: e.clientY/window.innerHeight }
+                    origin: { 
+                        x: e.clientX/window.innerWidth,
+                        y: e.clientY/window.innerHeight 
+                    },
+                    colors: ['#ff69b4', '#ff1493']
                 });
             }
         });
