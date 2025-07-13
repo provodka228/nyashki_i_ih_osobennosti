@@ -258,12 +258,125 @@
         .dancing {
             animation: dance 0.5s infinite;
         }
+
+        /* Новые стили для расширенной карточки и эффекта флешки */
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .flash-message {
+            font-size: 5em;
+            font-weight: bold;
+            color: black;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s;
+        }
+
+        .expanded-card {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(255, 105, 180, 0.5);
+            z-index: 1000;
+            display: none;
+            text-align: center;
+            border: 3px dashed #ff69b4;
+        }
+
+        .expanded-card img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #ff69b4;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .close-expanded {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff69b4;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .close-expanded:hover {
+            background: #ff1493;
+            transform: scale(1.1);
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background: #ffe6f2;
+            padding: 10px 15px;
+            border-radius: 20px;
+            min-width: 120px;
+            font-weight: bold;
+            color: #ff1493;
+            box-shadow: 0 2px 5px rgba(255, 105, 180, 0.2);
+        }
     </style>
 </head>
 <body>
     <!-- Секретная кнопка вечеринки -->
     <button class="secret-btn" title="Вечеринка!">🎉</button>
     
+    <!-- Эффект флешки -->
+    <div class="flash-overlay" id="flashOverlay">
+        <div class="flash-message" id="flashMessage">ФУ БЛЯТЬ УБЕРИТЕ НАХУЙ</div>
+    </div>
+
+    <!-- Расширенная карточка -->
+    <div class="expanded-card" id="expandedCard">
+        <button class="close-expanded" id="closeExpanded">X</button>
+        <img id="expandedPhoto" src="" alt="Увеличенное фото">
+        <h2 id="expandedName" style="color: #ff1493; margin-bottom: 10px;"></h2>
+        <p id="expandedDesc" style="color: #555; margin-bottom: 20px;"></p>
+        
+        <div class="stats">
+            <div class="stat-item">❤️ Харизма: <span id="charismaStat">90%</span></div>
+            <div class="stat-item">🎨 Стиль: <span id="styleStat">85%</span></div>
+            <div class="stat-item">🤪 Безумие: <span id="crazyStat">100%</span></div>
+            <div class="stat-item">🍑 Попка: <span id="buttStat">95%</span></div>
+        </div>
+    </div>
+
     <h1 class="floating">ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</h1>
 
     <!-- Аниме-девочки -->
@@ -340,12 +453,43 @@
         const sounds = {
             tomoko: "https://drive.google.com/uc?export=download&id=1g9Zuqs3o4P5eM8cnYwCkalDY0Fp_cxht",
             rem: "https://drive.google.com/uc?export=download&id=1c85o1lOXJb8cXgRo5iKeO53eZzROPKXY",
-            party: "https://drive.google.com/uc?export=download&id=1NYAxA2yNZ1jVf4NodR_yRL6ppV0ZIX94"
+            party: "https://drive.google.com/uc?export=download&id=1NYAxA2yNZ1jVf4NodR_yRL6ppV0ZIX94",
+            flash: "https://drive.google.com/uc?export=download&id=1YOUR_FLASH_SOUND_ID"
         };
 
         function playSound(url) {
             const audio = new Audio(url);
             audio.play().catch(e => console.log("Не удалось воспроизвести звук:", e));
+        }
+
+        // Функция для генерации случайных характеристик
+        function generateStats() {
+            return {
+                charisma: Math.floor(Math.random() * 30) + 70,
+                style: Math.floor(Math.random() * 30) + 65,
+                crazy: Math.floor(Math.random() * 40) + 60,
+                butt: Math.floor(Math.random() * 35) + 65
+            };
+        }
+
+        // Функция показа расширенной карточки
+        function showExpandedCard(cardNumber) {
+            const imgElement = document.getElementById(`friend-photo-${cardNumber}`);
+            const nameElement = document.getElementById(`name-friend${cardNumber}`);
+            const descElement = document.getElementById(`desc-friend${cardNumber}`);
+            
+            document.getElementById('expandedPhoto').src = imgElement.src;
+            document.getElementById('expandedName').textContent = nameElement.textContent;
+            document.getElementById('expandedDesc').textContent = descElement.textContent;
+            
+            // Генерируем случайные характеристики
+            const stats = generateStats();
+            document.getElementById('charismaStat').textContent = stats.charisma + '%';
+            document.getElementById('styleStat').textContent = stats.style + '%';
+            document.getElementById('crazyStat').textContent = stats.crazy + '%';
+            document.getElementById('buttStat').textContent = stats.butt + '%';
+            
+            document.getElementById('expandedCard').style.display = 'block';
         }
 
         // Запуск конфетти при загрузке
@@ -446,6 +590,11 @@
                     secretBtn.innerHTML = '🎉';
                 }
             });
+
+            // Обработчик закрытия расширенной карточки
+            document.getElementById('closeExpanded').addEventListener('click', function() {
+                document.getElementById('expandedCard').style.display = 'none';
+            });
         });
         
         // Функция инициализации карточки друга
@@ -482,6 +631,34 @@
             const savedPhoto = localStorage.getItem(`friend${cardNumber}_photo`);
             if (savedPhoto) {
                 imgElement.src = savedPhoto;
+                
+                // Добавляем обработчик клика для показа расширенной карточки
+                imgElement.addEventListener('click', function() {
+                    if (cardNumber === 1) {
+                        // Особый эффект для первой карточки
+                        const flashOverlay = document.getElementById('flashOverlay');
+                        const flashMessage = document.getElementById('flashMessage');
+                        
+                        flashOverlay.style.opacity = 1;
+                        flashMessage.style.opacity = 1;
+                        flashMessage.style.transform = 'scale(1)';
+                        
+                        // Воспроизводим звук флешки (если есть)
+                        if (sounds.flash) playSound(sounds.flash);
+                        
+                        setTimeout(() => {
+                            flashOverlay.style.opacity = 0;
+                            flashMessage.style.opacity = 0;
+                            flashMessage.style.transform = 'scale(0.5)';
+                            
+                            // Показываем расширенную карточку после эффекта
+                            setTimeout(() => showExpandedCard(cardNumber), 300);
+                        }, 500);
+                    } else {
+                        // Для остальных карточек просто показываем расширенную карточку
+                        showExpandedCard(cardNumber);
+                    }
+                });
             }
             
             // Редактирование текста
