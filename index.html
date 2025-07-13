@@ -336,7 +336,13 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
     
     <script>
-        // Звуковые эффекты
+        // Звуковые эффекты из вашего Google Drive
+        const sounds = {
+            tomoko: "https://drive.google.com/uc?export=download&id=1c85o1lOXJb8cXgRo5iKeO53eZzROPKXY",
+            rem: "https://drive.google.com/uc?export=download&id=1g9Zuqs3o4P5eM8cnYwCkalDY0Fp_cxht",
+            party: "https://drive.google.com/uc?export=download&id=1NYAxA2yNZ1jVf4NodR_yRL6ppV0ZIX94"
+        };
+
         function playSound(url) {
             const audio = new Audio(url);
             audio.play().catch(e => console.log("Не удалось воспроизвести звук:", e));
@@ -359,7 +365,7 @@
             
             // Обработчики для аниме-девочек
             document.getElementById('tomoko').addEventListener('click', function() {
-                playSound('https://drive.google.com/file/d/1g9Zuqs3o4P5eM8cnYwCkalDY0Fp_cxht/view?usp=drive_link');
+                playSound(sounds.tomoko);
                 confetti({
                     particleCount: 30,
                     spread: 40,
@@ -369,7 +375,7 @@
             });
             
             document.getElementById('rem').addEventListener('click', function() {
-                playSound('https://drive.google.com/file/d/1c85o1lOXJb8cXgRo5iKeO53eZzROPKXY/view?usp=drive_link');
+                playSound(sounds.rem);
                 confetti({
                     particleCount: 30,
                     spread: 40,
@@ -387,6 +393,7 @@
                 
                 if (partyMode) {
                     // Включение режима вечеринки
+                    playSound(sounds.party);
                     document.body.classList.add('party-mode');
                     document.querySelectorAll('.friend-card, h1').forEach(el => {
                         el.classList.add('dancing');
