@@ -13,7 +13,7 @@
             padding: 20px;
         }
         h1 {
-            color: #ff69b4; /* Розовый для "няшности" */
+            color: #ff69b4;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
         .friend-card {
@@ -31,31 +31,55 @@
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid #ff69b4;
+            cursor: pointer; /* Меняем курсор при наведении */
         }
         .friend-name {
             font-weight: bold;
             color: #ff1493;
             margin: 10px 0;
         }
+        input[type="file"] {
+            display: none; /* Прячем стандартный input */
+        }
     </style>
 </head>
 <body>
     <h1>ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</h1>
 
-    <!-- Карточка друга 1 -->
+    <!-- Карточка друга с возможностью загрузки фото -->
     <div class="friend-card">
-        <img src="https://via.placeholder.com/150" alt="Фото друга" class="friend-photo">
+        <!-- Блок для фото (при клике откроется проводник) -->
+        <label for="photo-upload">
+            <img 
+                id="friend-photo" 
+                src="https://via.placeholder.com/150" 
+                alt="Кликни, чтобы загрузить фото" 
+                class="friend-photo"
+                title="Кликни, чтобы загрузить фото"
+            >
+        </label>
+        <input 
+            type="file" 
+            id="photo-upload" 
+            accept="image/*" 
+            onchange="loadPhoto(event)"
+        >
         <div class="friend-name">Имя друга</div>
-        <div class="friend-description">Здесь будет описание его "политехнической няшности".</div>
+        <div class="friend-description">Описание няшки</div>
     </div>
 
-    <!-- Карточка друга 2 -->
-    <div class="friend-card">
-        <img src="https://via.placeholder.com/150" alt="Фото друга" class="friend-photo">
-        <div class="friend-name">Имя друга</div>
-        <div class="friend-description">Ещё один гений/чудик/няшка.</div>
-    </div>
-
-    <!-- Можно добавить больше друзей -->
+    <script>
+        function loadPhoto(event) {
+            const file = event.target.files[0]; // Получаем выбранный файл
+            if (file) {
+                const reader = new FileReader(); // Читаем файл
+                reader.onload = function(e) {
+                    // Меняем фото на загруженное
+                    document.getElementById('friend-photo').src = e.target.result;
+                };
+                reader.readAsDataURL(file); // Преобразуем в base64
+            }
+        }
+    </script>
 </body>
 </html>
