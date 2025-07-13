@@ -19,6 +19,8 @@
             background-attachment: fixed;
             transition: all 0.5s;
             overflow-x: hidden;
+            min-height: 100vh;
+            padding-bottom: 180px; /* Чтобы аниме-девочки не перекрывали контент */
         }
         
         /* Вечеринка режим */
@@ -164,12 +166,12 @@
             box-shadow: 0 0 8px rgba(255, 20, 147, 0.4);
         }
         
-        .anime-girl {
+        .anime-character {
             position: fixed;
-            width: 150px;
-            transition: all 0.5s;
             z-index: 100;
             cursor: pointer;
+            transition: all 0.5s;
+            height: 180px;
         }
         
         #rem {
@@ -177,12 +179,13 @@
             left: 20px;
         }
         
-        #anime-girl {
+        #konata {
             bottom: 20px;
             right: 20px;
+            height: 160px;
         }
         
-        .anime-girl:hover {
+        .anime-character:hover {
             transform: scale(1.1) rotate(-10deg);
         }
         
@@ -248,8 +251,8 @@
     <h1 class="floating">ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</h1>
 
     <!-- Аниме-девочки -->
-    <img src="https://i.pinimg.com/originals/20/33/65/203365739421321360a6b0e8e1e3e3a3.jpg" class="anime-girl floating" id="anime-girl" alt="Аниме-няшка" title="Ня~">
-    <img src="https://i.pinimg.com/originals/28/42/90/28429041392607438a6b0e8e1e3e3a3.jpg" class="anime-girl floating" id="rem" alt="Рем" title="Рем-тян!">
+    <img src="https://i.imgur.com/JrQ6TzG.png" class="anime-character floating" id="konata" alt="Коната" title="Коната из Lucky Star!">
+    <img src="https://i.imgur.com/8mR9y9v.png" class="anime-character floating" id="rem" alt="Рем" title="Рем-тян из Re:Zero">
 
     <div class="friends-container">
         <!-- Карточка друга 1 -->
@@ -264,8 +267,8 @@
                 >
             </label>
             <input type="file" id="photo-upload-1" accept="image/*">
-            <div class="friend-name" id="name-friend1">Имя друга</div>
-            <div class="friend-description" id="desc-friend1">Описание няшки</div>
+            <div class="friend-name" id="name-friend1">Гандон</div>
+            <div class="friend-description" id="desc-friend1">бокс</div>
             
             <input type="text" id="edit-name-friend1" class="text-input" placeholder="Введите имя">
             <input type="text" id="edit-desc-friend1" class="text-input" placeholder="Введите описание">
@@ -284,8 +287,8 @@
                 >
             </label>
             <input type="file" id="photo-upload-2" accept="image/*">
-            <div class="friend-name" id="name-friend2">Имя друга</div>
-            <div class="friend-description" id="desc-friend2">Описание няшки</div>
+            <div class="friend-name" id="name-friend2">Сашенька</div>
+            <div class="friend-description" id="desc-friend2">Миленький фембойчик</div>
             
             <input type="text" id="edit-name-friend2" class="text-input" placeholder="Введите имя">
             <input type="text" id="edit-desc-friend2" class="text-input" placeholder="Введите описание">
@@ -342,7 +345,7 @@
                 if (partyMode) {
                     // Включение режима вечеринки
                     document.body.classList.add('party-mode');
-                    document.querySelectorAll('.friend-card, .anime-girl, h1').forEach(el => {
+                    document.querySelectorAll('.friend-card, .anime-character, h1').forEach(el => {
                         el.classList.add('dancing');
                     });
                     
