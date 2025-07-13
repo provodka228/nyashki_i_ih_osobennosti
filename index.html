@@ -20,7 +20,7 @@
             transition: all 0.5s;
             overflow-x: hidden;
             min-height: 100vh;
-            padding-bottom: 180px; /* Чтобы аниме-девочки не перекрывали контент */
+            padding-bottom: 180px;
         }
         
         /* Вечеринка режим */
@@ -36,8 +36,12 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
             font-size: 2.5em;
             margin-bottom: 30px;
-            animation: glow 2s infinite alternate;
+            animation: glow 2s infinite alternate, blink 3s infinite;
             transition: all 0.3s;
+        }
+        
+        h1:hover {
+            animation: glow 0.5s infinite alternate, blink-fast 0.8s infinite;
         }
         
         .friends-container {
@@ -172,6 +176,7 @@
             cursor: pointer;
             transition: all 0.5s;
             height: 180px;
+            filter: drop-shadow(0 0 5px rgba(255, 105, 180, 0.7));
         }
         
         #rem {
@@ -179,7 +184,7 @@
             left: 20px;
         }
         
-        #konata {
+        #tomoko {
             bottom: 20px;
             right: 20px;
             height: 160px;
@@ -187,6 +192,7 @@
         
         .anime-character:hover {
             transform: scale(1.1) rotate(-10deg);
+            filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.9));
         }
         
         .secret-btn {
@@ -214,6 +220,16 @@
             to {
                 text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493, 0 0 30px #ff1493;
             }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes blink-fast {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
         @keyframes float {
@@ -251,8 +267,8 @@
     <h1 class="floating">ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</h1>
 
     <!-- Аниме-девочки -->
-    <img src="https://i.imgur.com/JrQ6TzG.png" class="anime-character floating" id="konata" alt="Коната" title="Коната из Lucky Star!">
-    <img src="https://i.imgur.com/8mR9y9v.png" class="anime-character floating" id="rem" alt="Рем" title="Рем-тян из Re:Zero">
+    <img src="https://i.pinimg.com/736x/00/05/fe/0005fe45713cdd5fb9c161241543c048.jpg" class="anime-character floating" id="tomoko" alt="Томоко" title="Я..Я считаю что Сашенька лучший тут..!">
+    <img src="https://i.pinimg.com/1200x/2a/a3/03/2aa3032a9c81815906cc30f0a3991d55.jpg" class="anime-character floating" id="rem" alt="Рем" title="Тот первый парень не внушает мне доверия, ня">
 
     <div class="friends-container">
         <!-- Карточка друга 1 -->
