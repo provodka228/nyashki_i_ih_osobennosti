@@ -101,19 +101,42 @@
             loadSavedData('friend1');
         });
 
-        // Загрузка фото
+        // Загрузка фото (исправленная версия)
         function loadPhoto(event, friendId) {
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgElement = document.getElementById(`friend-photo-${friendId}`);
-                    imgElement.src = e.target.result;
-                    // Сохраняем фото в localStorage
-                    localStorage.setItem(`photo_${friendId}`, e.target.result);
-                };
-                reader.readAsDataURL(file);
+            if (!file) return;
+            
+            // Проверка типа файла
+            if (!file.type.match('image.*')) {
+                alert('Пожалуйста, выберите изображение (JPEG, PNG, GIF)');
+                return;
             }
+
+            const reader = new FileReader();
+            
+            reader.onloadstart = function() {
+                console.log('Начало загрузки изображения');
+            };
+            
+            reader.onload = function(e) {
+                const imgElement = document.getElementById(`friend-photo-${friendId}`);
+                if (imgElement) {
+                    imgElement.src = e.target.result;
+                    localStorage.setItem(`photo_${friendId}`, e.target.result);
+                    console.log('Фото успешно загружено и сохранено');
+                }
+            };
+            
+            reader.onerror = function(error) {
+                console.error('Ошибка при загрузке фото:', error);
+                alert('Произошла ошибка при загрузке фото. Попробуйте другой файл.');
+            };
+            
+            reader.onabort = function() {
+                console.warn('Загрузка фото прервана пользователем');
+            };
+            
+            reader.readAsDataURL(file);
         }
 
         // Переключение режима редактирования текста
@@ -151,14 +174,24 @@
             // Фото
             const savedPhoto = localStorage.getItem(`photo_${friendId}`);
             if (savedPhoto) {
-                document.getElementById(`friend-photo-${friendId}`).src = savedPhoto;
+                const imgElement = document.getElementById(`friend-photo-${friendId}`);
+                if (imgElement) {
+                    imgElement.src = savedPhoto;
+                    console.log('Фото загружено из хранилища');
+                }
             }
 
             // Текст
             const savedName = localStorage.getItem(`name_${friendId}`);
             const savedDesc = localStorage.getItem(`desc_${friendId}`);
-            if (savedName) document.getElementById(`name-${friendId}`).textContent = savedName;
-            if (savedDesc) document.getElementById(`desc-${friendId}`).textContent = savedDesc;
+            if (savedName) {
+                const nameElement = document.getElementById(`name-${friendId}`);
+                if (nameElement) nameElement.textContent = savedName;
+            }
+            if (savedDesc) {
+                const descElement = document.getElementById(`desc-${friendId}`);
+                if (descElement) descElement.textContent = savedDesc;
+            }
         }
     </script>
 </body>
