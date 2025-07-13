@@ -336,6 +336,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
     
     <script>
+        // Звуковые эффекты
+        function playSound(url) {
+            const audio = new Audio(url);
+            audio.play().catch(e => console.log("Не удалось воспроизвести звук:", e));
+        }
+
         // Запуск конфетти при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             // Большой взрыв конфетти
@@ -351,6 +357,27 @@
             initFriendCard(2);
             initFriendCard(3);
             
+            // Обработчики для аниме-девочек
+            document.getElementById('tomoko').addEventListener('click', function() {
+                playSound('https://www.myinstants.com/media/sounds/tomoko-kuku.mp3');
+                confetti({
+                    particleCount: 30,
+                    spread: 40,
+                    origin: { x: 0.8, y: 0.8 },
+                    colors: ['#ffffff', '#ff69b4']
+                });
+            });
+            
+            document.getElementById('rem').addEventListener('click', function() {
+                playSound('https://www.myinstants.com/media/sounds/rem-nya.mp3');
+                confetti({
+                    particleCount: 30,
+                    spread: 40,
+                    origin: { x: 0.2, y: 0.8 },
+                    colors: ['#ff69b4', '#ffffff']
+                });
+            });
+            
             // Секретная кнопка вечеринки
             const secretBtn = document.querySelector('.secret-btn');
             let partyMode = false;
@@ -361,8 +388,13 @@
                 if (partyMode) {
                     // Включение режима вечеринки
                     document.body.classList.add('party-mode');
-                    document.querySelectorAll('.friend-card, .anime-character, h1').forEach(el => {
+                    document.querySelectorAll('.friend-card, h1').forEach(el => {
                         el.classList.add('dancing');
+                    });
+                    
+                    // Аниме-девочки тоже танцуют, но без скрытия
+                    document.querySelectorAll('.anime-character').forEach(el => {
+                        el.style.animation = 'dance 0.5s infinite';
                     });
                     
                     // Мега-конфетти
@@ -400,6 +432,9 @@
                     document.body.classList.remove('party-mode');
                     document.querySelectorAll('.dancing').forEach(el => {
                         el.classList.remove('dancing');
+                    });
+                    document.querySelectorAll('.anime-character').forEach(el => {
+                        el.style.animation = 'float 3s ease-in-out infinite';
                     });
                     secretBtn.innerHTML = '🎉';
                 }
