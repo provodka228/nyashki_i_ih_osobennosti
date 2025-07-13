@@ -7,114 +7,256 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
         
-        /* Все предыдущие стили остаются без изменений */
-
-        /* Добавляем новые стили для эффекта флешки и расширенной карточки */
-        .flash-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: white;
-            z-index: 9999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-        }
-
-        .flash-message {
-            font-size: 5em;
-            font-weight: bold;
-            color: black;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-            text-transform: uppercase;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.5s;
-        }
-
-        .expanded-card {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 600px;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            z-index: 1000;
-            display: none;
+        body {
+            font-family: 'Comic Neue', cursive;
+            background-color: #fff0f5;
             text-align: center;
+            margin: 0;
+            padding: 20px;
+            background-image: url('https://i.pinimg.com/originals/7f/3a/3b/7f3a3b4e9c7c7a8b6e8d7c0e8f3a3b4e.png');
+            background-size: 300px;
+            background-blend-mode: overlay;
+            background-attachment: fixed;
+            transition: all 0.5s;
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding-bottom: 180px;
         }
-
-        .expanded-card img {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid #ff69b4;
-            margin-bottom: 20px;
+        
+        /* Вечеринка режим */
+        body.party-mode {
+            animation: partyBg 0.5s infinite;
+            background-image: url('https://i.pinimg.com/originals/7f/3a/3b/7f3a3b4e9c7c7a8b6e8d7c0e8f3a3b4e.png'), 
+                            linear-gradient(45deg, #ff0000, #00ff00, #0000ff, #ffff00);
+            background-blend-mode: overlay, screen;
         }
-
-        .close-expanded {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: #ff69b4;
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
+        
+        h1 {
+            color: #ff69b4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            animation: glow 2s infinite alternate, blink 3s infinite;
+            transition: all 0.3s;
         }
-
-        .stats {
+        
+        h1:hover {
+            animation: glow 0.5s infinite alternate, blink-fast 0.8s infinite;
+        }
+        
+        .friends-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 20px;
+            padding: 20px;
         }
-
-        .stat-item {
-            background: #ffe6f2;
-            padding: 10px 15px;
-            border-radius: 20px;
-            min-width: 120px;
-        }
-
-        /* Стили для плеера вечеринки */
-        .party-player {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
+        
+        .friend-card {
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px;
-            padding: 10px;
-            box-shadow: 0 4px 20px rgba(255, 105, 180, 0.5);
+            border: 3px dashed #ff69b4;
+            border-radius: 15px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
             transition: all 0.3s;
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .party-player.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .party-player iframe {
-            border-radius: 10px;
+            position: relative;
             overflow: hidden;
+        }
+        
+        .friend-card:hover {
+            transform: translateY(-5px) rotate(1deg);
+            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.4);
+        }
+        
+        .friend-card::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #ff69b4, #ff1493, #ff69b4);
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .friend-card:hover::before {
+            opacity: 0.3;
+        }
+        
+        .friend-photo {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ff69b4;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .friend-photo:hover {
+            transform: scale(1.1) rotate(5deg);
+            border-color: #ff1493;
+            box-shadow: 0 8px 20px rgba(255, 20, 147, 0.4);
+        }
+        
+        .friend-name {
+            font-weight: bold;
+            color: #ff1493;
+            margin: 15px 0;
+            font-size: 1.5em;
+            transition: all 0.3s;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .friend-name:hover {
+            color: #ff69b4;
+            transform: scale(1.05);
+            text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+        }
+        
+        .friend-description {
+            color: #555;
+            transition: all 0.3s;
+            padding: 0 10px;
+        }
+        
+        .friend-description:hover {
+            color: #ff69b4;
+            transform: scale(1.02);
+        }
+        
+        input[type="file"], 
+        input[type="text"] {
+            display: none;
+        }
+        
+        .edit-btn {
+            background: linear-gradient(45deg, #ff69b4, #ff1493);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
+            font-weight: bold;
+        }
+        
+        .edit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(255, 20, 147, 0.4);
+            background: linear-gradient(45deg, #ff1493, #ff69b4);
+        }
+        
+        .text-input {
+            display: block;
+            width: 80%;
+            margin: 8px auto;
+            padding: 8px;
+            border: 2px solid #ff69b4;
+            border-radius: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .text-input:focus {
+            border-color: #ff1493;
+            box-shadow: 0 0 8px rgba(255, 20, 147, 0.4);
+        }
+        
+        .anime-character {
+            position: fixed;
+            z-index: 100;
+            cursor: pointer;
+            transition: all 0.5s;
+            height: 180px;
+            filter: drop-shadow(0 0 5px rgba(255, 105, 180, 0.7));
+        }
+        
+        #rem {
+            bottom: 20px;
+            left: 20px;
+        }
+        
+        #tomoko {
+            bottom: 20px;
+            right: 20px;
+            height: 160px;
+        }
+        
+        .anime-character:hover {
+            transform: scale(1.1) rotate(-10deg);
+            filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.9));
+        }
+        
+        .secret-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        
+        .secret-btn:hover {
+            opacity: 1;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4;
+            }
+            to {
+                text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493, 0 0 30px #ff1493;
+            }
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        @keyframes blink-fast {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        @keyframes dance {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(5deg) scale(1.05); }
+            50% { transform: rotate(-5deg) scale(1.1); }
+            75% { transform: rotate(5deg) scale(1.05); }
+            100% { transform: rotate(0deg) scale(1); }
+        }
+        
+        @keyframes partyBg {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .dancing {
+            animation: dance 0.5s infinite;
         }
     </style>
 </head>
@@ -122,37 +264,6 @@
     <!-- Секретная кнопка вечеринки -->
     <button class="secret-btn" title="Вечеринка!">🎉</button>
     
-    <!-- Плеер для вечеринки -->
-    <div class="party-player">
-        <iframe 
-            width="110" 
-            height="200" 
-            src="https://www.myinstants.com/instant/instant-dance-party/embed/" 
-            frameborder="0" 
-            scrolling="no">
-        </iframe>
-    </div>
-
-    <!-- Эффект флешки -->
-    <div class="flash-overlay" id="flashOverlay">
-        <div class="flash-message" id="flashMessage">ФУ БЛЯТЬ УБЕРИТЕ НАХУЙ</div>
-    </div>
-
-    <!-- Расширенная карточка -->
-    <div class="expanded-card" id="expandedCard">
-        <button class="close-expanded" id="closeExpanded">X</button>
-        <img id="expandedPhoto" src="" alt="Увеличенное фото">
-        <h2 id="expandedName"></h2>
-        <p id="expandedDesc"></p>
-        
-        <div class="stats">
-            <div class="stat-item">❤️ Харизма: <span id="charismaStat">90%</span></div>
-            <div class="stat-item">🎨 Стиль: <span id="styleStat">85%</span></div>
-            <div class="stat-item">🤪 Безумие: <span id="crazyStat">100%</span></div>
-            <div class="stat-item">🍑 Попка: <span id="buttStat">95%</span></div>
-        </div>
-    </div>
-
     <h1 class="floating">ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</h1>
 
     <!-- Аниме-девочки -->
@@ -229,23 +340,12 @@
         const sounds = {
             tomoko: "https://drive.google.com/uc?export=download&id=1g9Zuqs3o4P5eM8cnYwCkalDY0Fp_cxht",
             rem: "https://drive.google.com/uc?export=download&id=1c85o1lOXJb8cXgRo5iKeO53eZzROPKXY",
-            party: "https://drive.google.com/uc?export=download&id=1NYAxA2yNZ1jVf4NodR_yRL6ppV0ZIX94",
-            flash: "https://drive.google.com/uc?export=download&id=1YOUR_FLASH_SOUND_ID"
+            party: "https://drive.google.com/uc?export=download&id=1NYAxA2yNZ1jVf4NodR_yRL6ppV0ZIX94"
         };
 
         function playSound(url) {
             const audio = new Audio(url);
             audio.play().catch(e => console.log("Не удалось воспроизвести звук:", e));
-        }
-
-        // Функция для генерации случайных характеристик
-        function generateStats() {
-            return {
-                charisma: Math.floor(Math.random() * 30) + 70,
-                style: Math.floor(Math.random() * 30) + 65,
-                crazy: Math.floor(Math.random() * 40) + 60,
-                butt: Math.floor(Math.random() * 35) + 65
-            };
         }
 
         // Запуск конфетти при загрузке
@@ -286,7 +386,6 @@
             
             // Секретная кнопка вечеринки
             const secretBtn = document.querySelector('.secret-btn');
-            const partyPlayer = document.querySelector('.party-player');
             let partyMode = false;
             
             secretBtn.addEventListener('click', function() {
@@ -295,13 +394,12 @@
                 if (partyMode) {
                     // Включение режима вечеринки
                     playSound(sounds.party);
-                    partyPlayer.classList.add('visible');
                     document.body.classList.add('party-mode');
                     document.querySelectorAll('.friend-card, h1').forEach(el => {
                         el.classList.add('dancing');
                     });
                     
-                    // Аниме-девочки тоже танцуют
+                    // Аниме-девочки тоже танцуют, но без скрытия
                     document.querySelectorAll('.anime-character').forEach(el => {
                         el.style.animation = 'dance 0.5s infinite';
                     });
@@ -338,7 +436,6 @@
                     secretBtn.innerHTML = '🕺';
                 } else {
                     // Выключение режима вечеринки
-                    partyPlayer.classList.remove('visible');
                     document.body.classList.remove('party-mode');
                     document.querySelectorAll('.dancing').forEach(el => {
                         el.classList.remove('dancing');
@@ -348,11 +445,6 @@
                     });
                     secretBtn.innerHTML = '🎉';
                 }
-            });
-
-            // Обработчик закрытия расширенной карточки
-            document.getElementById('closeExpanded').addEventListener('click', function() {
-                document.getElementById('expandedCard').style.display = 'none';
             });
         });
         
@@ -390,34 +482,6 @@
             const savedPhoto = localStorage.getItem(`friend${cardNumber}_photo`);
             if (savedPhoto) {
                 imgElement.src = savedPhoto;
-                
-                // Добавляем обработчик клика для показа расширенной карточки
-                imgElement.addEventListener('click', function() {
-                    if (cardNumber === 1) {
-                        // Особый эффект для первой карточки
-                        const flashOverlay = document.getElementById('flashOverlay');
-                        const flashMessage = document.getElementById('flashMessage');
-                        
-                        flashOverlay.style.opacity = 1;
-                        flashMessage.style.opacity = 1;
-                        flashMessage.style.transform = 'scale(1)';
-                        
-                        // Воспроизводим звук флешки (если есть)
-                        if (sounds.flash) playSound(sounds.flash);
-                        
-                        setTimeout(() => {
-                            flashOverlay.style.opacity = 0;
-                            flashMessage.style.opacity = 0;
-                            flashMessage.style.transform = 'scale(0.5)';
-                            
-                            // Показываем расширенную карточку после эффекта
-                            setTimeout(showExpandedCard, 300, cardNumber);
-                        }, 500);
-                    } else {
-                        // Для остальных карточек просто показываем расширенную карточку
-                        showExpandedCard(cardNumber);
-                    }
-                });
             }
             
             // Редактирование текста
@@ -463,27 +527,7 @@
             if (savedName) document.getElementById(`name-friend${cardNumber}`).textContent = savedName;
             if (savedDesc) document.getElementById(`desc-friend${cardNumber}`).textContent = savedDesc;
         }
-
-        // Функция показа расширенной карточки
-        function showExpandedCard(cardNumber) {
-            const imgElement = document.getElementById(`friend-photo-${cardNumber}`);
-            const nameElement = document.getElementById(`name-friend${cardNumber}`);
-            const descElement = document.getElementById(`desc-friend${cardNumber}`);
-            
-            document.getElementById('expandedPhoto').src = imgElement.src;
-            document.getElementById('expandedName').textContent = nameElement.textContent;
-            document.getElementById('expandedDesc').textContent = descElement.textContent;
-            
-            // Генерируем случайные характеристики
-            const stats = generateStats();
-            document.getElementById('charismaStat').textContent = stats.charisma + '%';
-            document.getElementById('styleStat').textContent = stats.style + '%';
-            document.getElementById('crazyStat').textContent = stats.crazy + '%';
-            document.getElementById('buttStat').textContent = stats.butt + '%';
-            
-            document.getElementById('expandedCard').style.display = 'block';
-        }
-
+        
         // Конфетти при клике в любом месте
         document.addEventListener('click', function(e) {
             if (e.target.tagName !== 'BUTTON' && Math.random() > 0.7) {
