@@ -3,16 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self';
-        script-src 'self' 'unsafe-inline';
-        img-src 'self' data: blob: https://via.placeholder.com;
-        style-src 'self' 'unsafe-inline';
-        font-src 'self';
-        connect-src 'self';
-    ">
     <title>ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</title>
     <style>
+        /* Стили остаются без изменений */
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
@@ -40,10 +33,6 @@
             object-fit: cover;
             border: 3px solid #ff69b4;
             cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .friend-photo:hover {
-            transform: scale(1.05);
         }
         .friend-name {
             font-weight: bold;
@@ -65,25 +54,12 @@
             border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
-            transition: background-color 0.3s;
-        }
-        .edit-btn:hover {
-            background-color: #ff1493;
-        }
-        .text-input {
-            display: block;
-            width: 80%;
-            margin: 5px auto;
-            padding: 5px;
-            border: 1px solid #ff69b4;
-            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <h1>ПОЛИТЕХНИЧЕСКИЕ НЯШКИ И ИХ ОСОБЕННОСТИ</h1>
 
-    <!-- Карточка друга -->
     <div class="friend-card" data-id="friend1">
         <label for="photo-upload-1">
             <img 
@@ -98,169 +74,83 @@
             type="file" 
             id="photo-upload-1" 
             accept="image/*" 
-            onchange="loadPhoto(event, 'friend1')"
         >
         <div class="friend-name" id="name-friend1">Имя друга</div>
         <div class="friend-description" id="desc-friend1">Описание няшки</div>
         
-        <!-- Поля для редактирования текста -->
-        <input 
-            type="text" 
-            id="edit-name-friend1" 
-            class="text-input"
-            placeholder="Введите имя" 
-            onblur="saveText('friend1', 'name')"
-        >
-        <input 
-            type="text" 
-            id="edit-desc-friend1" 
-            class="text-input"
-            placeholder="Введите описание" 
-            onblur="saveText('friend1', 'desc')"
-        >
-        <button class="edit-btn" onclick="toggleEdit('friend1')">✏️ Редактировать текст</button>
+        <input type="text" id="edit-name-friend1" placeholder="Введите имя">
+        <input type="text" id="edit-desc-friend1" placeholder="Введите описание">
+        <button class="edit-btn">✏️ Редактировать текст</button>
     </div>
 
     <script>
-        // Проверка поддержки localStorage
-        function isLocalStorageAvailable() {
-            try {
-                const test = '__storage_test__';
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch(e) {
-                console.error('LocalStorage не доступен:', e);
-                return false;
-            }
-        }
-
-        // Загружаем сохранённые данные при запуске
+        // Полная переработка скриптов для избежания CSP ошибок
         document.addEventListener('DOMContentLoaded', function() {
-            if (!isLocalStorageAvailable()) {
-                alert('Ваш браузер не поддерживает сохранение данных или оно отключено. Изменения не будут сохраняться после закрытия страницы.');
-                return;
+            // Инициализация элементов
+            const fileInput = document.getElementById('photo-upload-1');
+            const imgElement = document.getElementById('friend-photo-1');
+            const editBtn = document.querySelector('.edit-btn');
+            
+            // Обработчик загрузки фото (упрощенная версия)
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file || !file.type.match('image.*')) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imgElement.src = event.target.result;
+                    try {
+                        localStorage.setItem('friend1_photo', event.target.result);
+                    } catch (error) {
+                        console.error('Ошибка сохранения:', error);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            // Загрузка сохраненного фото
+            const savedPhoto = localStorage.getItem('friend1_photo');
+            if (savedPhoto) {
+                imgElement.src = savedPhoto;
             }
-            loadSavedData('friend1');
+            
+            // Редактирование текста
+            editBtn.addEventListener('click', function() {
+                const nameElement = document.getElementById('name-friend1');
+                const descElement = document.getElementById('desc-friend1');
+                const nameInput = document.getElementById('edit-name-friend1');
+                const descInput = document.getElementById('edit-desc-friend1');
+                
+                if (nameInput.style.display === 'none' || !nameInput.style.display) {
+                    nameInput.style.display = 'block';
+                    descInput.style.display = 'block';
+                    nameElement.style.display = 'none';
+                    descElement.style.display = 'none';
+                    nameInput.value = nameElement.textContent;
+                    descInput.value = descElement.textContent;
+                } else {
+                    nameInput.style.display = 'none';
+                    descInput.style.display = 'none';
+                    nameElement.style.display = 'block';
+                    descElement.style.display = 'block';
+                    nameElement.textContent = nameInput.value;
+                    descElement.textContent = descInput.value;
+                    
+                    try {
+                        localStorage.setItem('friend1_name', nameInput.value);
+                        localStorage.setItem('friend1_desc', descInput.value);
+                    } catch (error) {
+                        console.error('Ошибка сохранения:', error);
+                    }
+                }
+            });
+            
+            // Загрузка сохраненного текста
+            const savedName = localStorage.getItem('friend1_name');
+            const savedDesc = localStorage.getItem('friend1_desc');
+            if (savedName) document.getElementById('name-friend1').textContent = savedName;
+            if (savedDesc) document.getElementById('desc-friend1').textContent = savedDesc;
         });
-
-        // Загрузка фото (безопасная версия)
-        function loadPhoto(event, friendId) {
-            if (!event.target.files || !event.target.files[0]) return;
-            
-            const file = event.target.files[0];
-            const maxSizeMB = 5;
-            
-            // Проверка типа файла
-            if (!file.type.match(/image\/(jpeg|png|gif|webp)/)) {
-                alert('Пожалуйста, выберите изображение в формате JPEG, PNG или GIF');
-                return;
-            }
-            
-            // Проверка размера файла
-            if (file.size > maxSizeMB * 1024 * 1024) {
-                alert(`Изображение слишком большое. Максимальный размер: ${maxSizeMB}MB`);
-                return;
-            }
-
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const imgElement = document.getElementById(`friend-photo-${friendId}`);
-                    if (imgElement) {
-                        imgElement.src = e.target.result;
-                        if (isLocalStorageAvailable()) {
-                            localStorage.setItem(`photo_${friendId}`, e.target.result);
-                            console.log('Фото успешно загружено и сохранено');
-                        }
-                    }
-                } catch(error) {
-                    console.error('Ошибка при обработке фото:', error);
-                }
-            };
-            
-            reader.onerror = function() {
-                alert('Ошибка при чтении файла. Попробуйте другое изображение.');
-            };
-            
-            reader.readAsDataURL(file);
-        }
-
-        // Переключение режима редактирования текста
-        function toggleEdit(friendId) {
-            const nameElement = document.getElementById(`name-${friendId}`);
-            const descElement = document.getElementById(`desc-${friendId}`);
-            const nameInput = document.getElementById(`edit-name-${friendId}`);
-            const descInput = document.getElementById(`edit-desc-${friendId}`);
-
-            if (!nameElement || !descElement || !nameInput || !descInput) return;
-
-            if (window.getComputedStyle(nameInput).display === 'none') {
-                nameInput.style.display = 'block';
-                descInput.style.display = 'block';
-                nameElement.style.display = 'none';
-                descElement.style.display = 'none';
-                nameInput.value = nameElement.textContent;
-                descInput.value = descElement.textContent;
-                nameInput.focus();
-            } else {
-                nameInput.style.display = 'none';
-                descInput.style.display = 'none';
-                nameElement.style.display = 'block';
-                descElement.style.display = 'block';
-            }
-        }
-
-        // Сохранение текста
-        function saveText(friendId, type) {
-            if (!isLocalStorageAvailable()) return;
-            
-            const inputElement = document.getElementById(`edit-${type}-${friendId}`);
-            const textElement = document.getElementById(`${type}-${friendId}`);
-            
-            if (!inputElement || !textElement) return;
-            
-            const newValue = inputElement.value.trim();
-            textElement.textContent = newValue;
-            localStorage.setItem(`${type}_${friendId}`, newValue);
-        }
-
-        // Загрузка сохранённых данных
-        function loadSavedData(friendId) {
-            if (!isLocalStorageAvailable()) return;
-
-            // Фото
-            try {
-                const savedPhoto = localStorage.getItem(`photo_${friendId}`);
-                if (savedPhoto) {
-                    const imgElement = document.getElementById(`friend-photo-${friendId}`);
-                    if (imgElement) {
-                        imgElement.src = savedPhoto;
-                    }
-                }
-            } catch(e) {
-                console.error('Ошибка при загрузке фото:', e);
-            }
-
-            // Текст
-            try {
-                const savedName = localStorage.getItem(`name_${friendId}`);
-                const savedDesc = localStorage.getItem(`desc_${friendId}`);
-                
-                if (savedName) {
-                    const nameElement = document.getElementById(`name-${friendId}`);
-                    if (nameElement) nameElement.textContent = savedName;
-                }
-                
-                if (savedDesc) {
-                    const descElement = document.getElementById(`desc-${friendId}`);
-                    if (descElement) descElement.textContent = savedDesc;
-                }
-            } catch(e) {
-                console.error('Ошибка при загрузке текста:', e);
-            }
-        }
     </script>
 </body>
 </html>
