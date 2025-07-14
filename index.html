@@ -259,7 +259,7 @@
             animation: dance 0.5s infinite;
         }
 
-        /* Новые стили для расширенной карточки и эффекта флешки */
+        /* Стили для флеш-эффекта */
         .flash-overlay {
             position: fixed;
             top: 0;
@@ -285,13 +285,16 @@
             opacity: 0;
             transform: scale(0.5);
             transition: all 0.5s;
+            font-family: 'Impact', sans-serif;
+            letter-spacing: 5px;
         }
 
+        /* Стили для расширенной карточки */
         .expanded-card {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) scale(0.8);
             width: 80%;
             max-width: 600px;
             background: rgba(255, 255, 255, 0.95);
@@ -302,6 +305,13 @@
             display: none;
             text-align: center;
             border: 3px dashed #ff69b4;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .expanded-card.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .expanded-card img {
@@ -312,6 +322,11 @@
             border: 5px solid #ff69b4;
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+            transition: all 0.3s;
+        }
+
+        .expanded-card img:hover {
+            transform: scale(1.05) rotate(5deg);
         }
 
         .close-expanded {
@@ -327,11 +342,12 @@
             cursor: pointer;
             font-weight: bold;
             transition: all 0.3s;
+            z-index: 1001;
         }
 
         .close-expanded:hover {
             background: #ff1493;
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(90deg);
         }
 
         .stats {
@@ -350,8 +366,14 @@
             font-weight: bold;
             color: #ff1493;
             box-shadow: 0 2px 5px rgba(255, 105, 180, 0.2);
+            transition: all 0.3s;
         }
-        
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(255, 105, 180, 0.3);
+        }
+
         /* Стиль для placeholder */
         .photo-placeholder {
             cursor: pointer;
@@ -374,7 +396,7 @@
         
         /* Стиль для загруженного фото */
         .photo-uploaded {
-            cursor: default;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -474,12 +496,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
     
     <script>
-        // Звуковые эффекты из вашего Google Drive
+        // Звуковые эффекты
         const sounds = {
-            tomoko: "https://drive.google.com/uc?export=download&id=1g9Zuqs3o4P5eM8cnYwCkalDY0Fp_cxht",
-            rem: "https://drive.google.com/uc?export=download&id=1c85o1lOXJb8cXgRo5iKeO53eZzROPKXY",
-            party: "https://drive.google.com/uc?export=download&id=1NYAxA2yNZ1jVf4NodR_yRL6ppV0ZIX94",
-            flash: "https://drive.google.com/uc?export=download&id=1YOUR_FLASH_SOUND_ID"
+            tomoko: "https://www.myinstants.com/media/sounds/tomoko_kuroki_nyan.mp3",
+            rem: "https://www.myinstants.com/media/sounds/rem-ram-russian.mp3",
+            party: "https://www.myinstants.com/media/sounds/dance-party.mp3",
+            flash: "https://www.myinstants.com/media/sounds/cs-go-flashbang-sound-effect.mp3"
         };
 
         function playSound(url) {
@@ -514,7 +536,45 @@
             document.getElementById('crazyStat').textContent = stats.crazy + '%';
             document.getElementById('buttStat').textContent = stats.butt + '%';
             
-            document.getElementById('expandedCard').style.display = 'block';
+            const expandedCard = document.getElementById('expandedCard');
+            expandedCard.style.display = 'block';
+            
+            // Запускаем анимацию появления
+            setTimeout(() => {
+                expandedCard.classList.add('show');
+            }, 10);
+            
+            // Особый эффект для первой карточки
+            if (cardNumber === 1) {
+                const flashOverlay = document.getElementById('flashOverlay');
+                const flashMessage = document.getElementById('flashMessage');
+                
+                // Воспроизводим звук флешки
+                playSound(sounds.flash);
+                
+                // Показываем флеш-эффект
+                flashOverlay.style.opacity = 1;
+                flashMessage.style.opacity = 1;
+                flashMessage.style.transform = 'scale(1)';
+                
+                // Через 500ms начинаем скрывать флеш
+                setTimeout(() => {
+                    flashOverlay.style.opacity = 0;
+                    flashMessage.style.opacity = 0;
+                    flashMessage.style.transform = 'scale(0.5)';
+                }, 500);
+            }
+        }
+
+        // Функция скрытия расширенной карточки
+        function hideExpandedCard() {
+            const expandedCard = document.getElementById('expandedCard');
+            expandedCard.classList.remove('show');
+            
+            // После завершения анимации скрываем карточку
+            setTimeout(() => {
+                expandedCard.style.display = 'none';
+            }, 400);
         }
 
         // Проверка, является ли фото placeholder
@@ -540,30 +600,7 @@
                 
                 // Добавляем обработчик клика для показа расширенной карточки
                 imgElement.addEventListener('click', function() {
-                    if (cardNumber === 1) {
-                        // Особый эффект для первой карточки
-                        const flashOverlay = document.getElementById('flashOverlay');
-                        const flashMessage = document.getElementById('flashMessage');
-                        
-                        flashOverlay.style.opacity = 1;
-                        flashMessage.style.opacity = 1;
-                        flashMessage.style.transform = 'scale(1)';
-                        
-                        // Воспроизводим звук флешки (если есть)
-                        if (sounds.flash) playSound(sounds.flash);
-                        
-                        setTimeout(() => {
-                            flashOverlay.style.opacity = 0;
-                            flashMessage.style.opacity = 0;
-                            flashMessage.style.transform = 'scale(0.5)';
-                            
-                            // Показываем расширенную карточку после эффекта
-                            setTimeout(() => showExpandedCard(cardNumber), 300);
-                        }, 500);
-                    } else {
-                        // Для остальных карточек просто показываем расширенную карточку
-                        showExpandedCard(cardNumber);
-                    }
+                    showExpandedCard(cardNumber);
                 });
             }
         }
@@ -619,7 +656,7 @@
                         el.classList.add('dancing');
                     });
                     
-                    // Аниме-девочки тоже танцуют, но без скрытия
+                    // Аниме-девочки тоже танцуют
                     document.querySelectorAll('.anime-character').forEach(el => {
                         el.style.animation = 'dance 0.5s infinite';
                     });
@@ -668,8 +705,13 @@
             });
 
             // Обработчик закрытия расширенной карточки
-            document.getElementById('closeExpanded').addEventListener('click', function() {
-                document.getElementById('expandedCard').style.display = 'none';
+            document.getElementById('closeExpanded').addEventListener('click', hideExpandedCard);
+            
+            // Закрытие по клику вне карточки
+            document.getElementById('expandedCard').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideExpandedCard();
+                }
             });
         });
         
