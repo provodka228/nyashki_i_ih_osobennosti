@@ -62,6 +62,7 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
         
         .friend-card:hover {
@@ -96,6 +97,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
         }
         
         .friend-photo:hover {
@@ -111,6 +114,8 @@
             font-size: 1.5em;
             transition: all 0.3s;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
         }
         
         .friend-name:hover {
@@ -123,6 +128,8 @@
             color: #555;
             transition: all 0.3s;
             padding: 0 10px;
+            position: relative;
+            z-index: 2;
         }
         
         .friend-description:hover {
@@ -146,6 +153,8 @@
             transition: all 0.3s;
             box-shadow: 0 4px 8px rgba(255, 105, 180, 0.3);
             font-weight: bold;
+            position: relative;
+            z-index: 2;
         }
         
         .edit-btn:hover {
@@ -398,6 +407,18 @@
         .photo-uploaded {
             cursor: pointer;
         }
+        
+        /* Затемнение фона при открытой карточке */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -408,6 +429,9 @@
     <div class="flash-overlay" id="flashOverlay">
         <div class="flash-message" id="flashMessage">ФУ БЛЯТЬ УБЕРИТЕ НАХУЙ</div>
     </div>
+    
+    <!-- Затемнение фона -->
+    <div class="overlay" id="overlay"></div>
 
     <!-- Расширенная карточка -->
     <div class="expanded-card" id="expandedCard">
@@ -432,7 +456,7 @@
 
     <div class="friends-container">
         <!-- Карточка друга 1 -->
-        <div class="friend-card floating">
+        <div class="friend-card floating" data-card="1">
             <label for="photo-upload-1" id="photo-label-1">
                 <img 
                     id="friend-photo-1" 
@@ -452,7 +476,7 @@
         </div>
 
         <!-- Карточка друга 2 -->
-        <div class="friend-card floating">
+        <div class="friend-card floating" data-card="2">
             <label for="photo-upload-2" id="photo-label-2">
                 <img 
                     id="friend-photo-2" 
@@ -472,7 +496,7 @@
         </div>
 
         <!-- Карточка друга 3 -->
-        <div class="friend-card floating">
+        <div class="friend-card floating" data-card="3">
             <label for="photo-upload-3" id="photo-label-3">
                 <img 
                     id="friend-photo-3" 
@@ -536,6 +560,8 @@
             document.getElementById('crazyStat').textContent = stats.crazy + '%';
             document.getElementById('buttStat').textContent = stats.butt + '%';
             
+            // Показываем оверлей и карточку
+            document.getElementById('overlay').style.display = 'block';
             const expandedCard = document.getElementById('expandedCard');
             expandedCard.style.display = 'block';
             
@@ -570,6 +596,7 @@
         function hideExpandedCard() {
             const expandedCard = document.getElementById('expandedCard');
             expandedCard.classList.remove('show');
+            document.getElementById('overlay').style.display = 'none';
             
             // После завершения анимации скрываем карточку
             setTimeout(() => {
@@ -597,11 +624,14 @@
                 imgElement.classList.add('photo-uploaded');
                 labelElement.style.pointerEvents = 'none';
                 imgElement.title = "";
-                
-                // Добавляем обработчик клика для показа расширенной карточки
-                imgElement.addEventListener('click', function() {
-                    showExpandedCard(cardNumber);
-                });
+            }
+        }
+
+        // Обработчик клика по карточке
+        function handleCardClick(cardNumber) {
+            const imgElement = document.getElementById(`friend-photo-${cardNumber}`);
+            if (!isPlaceholder(imgElement.src)) {
+                showExpandedCard(cardNumber);
             }
         }
 
@@ -706,13 +736,7 @@
 
             // Обработчик закрытия расширенной карточки
             document.getElementById('closeExpanded').addEventListener('click', hideExpandedCard);
-            
-            // Закрытие по клику вне карточки
-            document.getElementById('expandedCard').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideExpandedCard();
-                }
-            });
+            document.getElementById('overlay').addEventListener('click', hideExpandedCard);
         });
         
         // Функция инициализации карточки друга
@@ -720,6 +744,15 @@
             const fileInput = document.getElementById(`photo-upload-${cardNumber}`);
             const imgElement = document.getElementById(`friend-photo-${cardNumber}`);
             const editBtn = document.querySelectorAll('.edit-btn')[cardNumber-1];
+            const cardElement = document.querySelector(`.friend-card[data-card="${cardNumber}"]`);
+            
+            // Обработчик клика по карточке
+            cardElement.addEventListener('click', function(e) {
+                // Проверяем, что клик не по дочерним элементам (кроме фото)
+                if (!e.target.closest('.edit-btn') && !e.target.closest('input')) {
+                    handleCardClick(cardNumber);
+                }
+            });
             
             // Обработчик загрузки фото
             fileInput.addEventListener('change', function(e) {
@@ -758,7 +791,9 @@
             }
             
             // Редактирование текста
-            editBtn.addEventListener('click', function() {
+            editBtn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Останавливаем всплытие, чтобы не открывалась карточка
+                
                 const nameElement = document.getElementById(`name-friend${cardNumber}`);
                 const descElement = document.getElementById(`desc-friend${cardNumber}`);
                 const nameInput = document.getElementById(`edit-name-friend${cardNumber}`);
